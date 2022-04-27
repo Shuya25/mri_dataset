@@ -8,6 +8,7 @@ import tqdm
 
 
 def load_images(
+    path = "all_subject.json",
     datasets={"ADNI2", "ADNI2-2", "PPMI", "4RTNI", "TrackHD"},
     classes={
         "CN",
@@ -49,7 +50,7 @@ def load_images(
         raise NotImplementedError("full-size images are not available on lab servers (yet).")
 
     # all_subjects = json.loads((root_dir / Path("radiology_datas/pei/all_subjects.json")).read_text())
-    all_subjects = json.loads((Path("all_subject.json")).read_text())
+    all_subjects = json.loads((Path(path)).read_text())
     matching_images = []
 
     for subject in all_subjects:
