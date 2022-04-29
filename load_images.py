@@ -1,6 +1,7 @@
 import json
 import pickle
 import socket
+from ast import Not
 from pathlib import Path
 
 import numpy as np
@@ -8,7 +9,6 @@ import tqdm
 
 
 def load_images(
-    path = "all_subject.json",
     datasets={"ADNI2", "ADNI2-2", "PPMI", "4RTNI", "TrackHD"},
     classes={
         "CN",
@@ -30,6 +30,7 @@ def load_images(
     size="full",
     unique=True,
     blacklist=True,
+    add_csv = False,
     dryrun=False,
 ):
     """
@@ -44,13 +45,12 @@ def load_images(
         list[dict]
     """
 
-    root_dir = Path("/data" if socket.gethostname().startswith("plant-ai") else "/home")
-
+    root_dir = Path("/data2" if socket.gethostname().startswith("plant-ai") else "/home")
     if size == "full" and root_dir == Path("/home"):
         raise NotImplementedError("full-size images are not available on lab servers (yet).")
 
     # all_subjects = json.loads((root_dir / Path("radiology_datas/pei/all_subjects.json")).read_text())
-    all_subjects = json.loads((Path(path)).read_text())
+    all_subjects = json.loads((root_dir / Path("radiology_datas/all_subjects.json")).read_text())
     matching_images = []
 
     for subject in all_subjects:
@@ -58,6 +58,9 @@ def load_images(
             continue
         if subject["class"] not in classes:
             continue
+        if add_csv and subject["not_csv"]:
+            continue
+
         for image in subject["images"]:
             if image["blacklisted"] and blacklist:
                 continue
