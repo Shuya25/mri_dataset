@@ -30,7 +30,8 @@ def load_images(
     size="full",
     unique=True,
     blacklist=True,
-    add_csv = False,
+    not_csv = False,
+    use_cutted_half = False,
     dryrun=False,
 ):
     """
@@ -40,6 +41,8 @@ def load_images(
         size (str): either 'full' or 'half'
         unique (bool): if True, only one scan per subject
         blacklist (bool): if True, failed scans are excluded
+        not_csv (bool): if True, remove image without csv file 
+        use_cutted_half (bool): if True, use padding cutted image
         dryrun (bool): if True, do not load image from the disk
     Returns:
         list[dict]
@@ -58,7 +61,7 @@ def load_images(
             continue
         if subject["class"] not in classes:
             continue
-        if add_csv and subject["not_csv"]:
+        if not_csv and subject["not_csv"]:
             continue
 
         for image in subject["images"]:
@@ -81,6 +84,8 @@ def load_images(
         for image in tqdm.tqdm(matching_images):
             if size == "half":
                 img_path = root_dir / Path(image["halfsize_img_path"])
+                if use_cutted_half:
+                    img_path.replace('stripped_cloud', 'stripped_cloud_cut')
             if size == "full":
                 img_path = root_dir / Path(image["fullsize_img_path"])
             image["voxel"] = image_loaders[img_path.suffix](img_path)
