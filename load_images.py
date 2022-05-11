@@ -85,7 +85,7 @@ def load_images(
             if size == "half":
                 img_path = root_dir / Path(image["halfsize_img_path"])
                 if use_cutted_half:
-                    img_path.replace('stripped_cloud', 'stripped_cloud_cut')
+                    img_path = img_path.replace('stripped_cloud', 'stripped_cloud_cut').replace('pkl', 'npy')
             if size == "full":
                 img_path = root_dir / Path(image["fullsize_img_path"])
             image["voxel"] = image_loaders[img_path.suffix](img_path)
